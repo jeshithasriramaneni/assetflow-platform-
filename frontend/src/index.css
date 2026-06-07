@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #0a0a14;
+    --bg-card: #111120;
+    --bg-card-hover: #16162a;
+    --border: rgba(99, 102, 241, 0.15);
+    --border-hover: rgba(99, 102, 241, 0.35);
+    --text-primary: #f0f0ff;
+    --text-secondary: #8888aa;
+    --accent: #6366f1;
+    --accent-glow: rgba(99, 102, 241, 0.25);
+  }
+
+  body {
+    @apply bg-[#0a0a14] text-[#f0f0ff] font-sans antialiased;
+    background-image: 
+      radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+    min-height: 100vh;
+  }
+
+  * {
+    @apply border-[rgba(99,102,241,0.15)];
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0a0a14;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2d2d5c;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4f46e5;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-[#111120] border border-[rgba(99,102,241,0.15)] rounded-xl;
+  }
+
+  .card-hover {
+    @apply card transition-all duration-200 hover:border-[rgba(99,102,241,0.35)] hover:bg-[#16162a] hover:shadow-lg hover:shadow-[rgba(99,102,241,0.1)];
+  }
+
+  .btn-primary {
+    @apply bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2 shadow-lg shadow-[rgba(99,102,241,0.25)] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-[#1a1a30] hover:bg-[#222240] text-indigo-300 border border-[rgba(99,102,241,0.25)] hover:border-indigo-500 font-medium px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2;
+  }
+
+  .btn-danger {
+    @apply bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/30 hover:border-red-500/60 font-medium px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2;
+  }
+
+  .btn-success {
+    @apply bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 hover:border-emerald-500/60 font-medium px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2;
+  }
+
+  .input {
+    @apply bg-[#0d0d1f] border border-[rgba(99,102,241,0.2)] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 rounded-lg px-3 py-2 text-[#f0f0ff] placeholder-[#555577] outline-none transition-all w-full text-sm;
+  }
+
+  .label {
+    @apply text-xs font-medium text-[#8888aa] uppercase tracking-wider mb-1.5 block;
+  }
+
+  .badge {
+    @apply text-xs font-medium px-2 py-0.5 rounded-full;
+  }
+
+  .stat-card {
+    @apply card p-5 relative overflow-hidden;
+  }
+
+  .glow-border {
+    @apply border border-indigo-500/40 shadow-[0_0_20px_rgba(99,102,241,0.15)];
+  }
+
+  .section-title {
+    @apply font-display text-xl font-semibold text-[#e0e0ff] mb-1;
+  }
+
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-[#8888aa] hover:text-[#e0e0ff] hover:bg-[#1a1a30];
+  }
+
+  .nav-item-active {
+    @apply nav-item text-indigo-300 bg-indigo-600/15 border border-indigo-500/20;
+  }
+
+  .table-header {
+    @apply text-xs font-medium text-[#8888aa] uppercase tracking-wider px-4 py-3 text-left;
+  }
+
+  .table-cell {
+    @apply px-4 py-3.5 text-sm text-[#d0d0ee];
+  }
+
+  .table-row {
+    @apply border-t border-[rgba(99,102,241,0.08)] hover:bg-[rgba(99,102,241,0.04)] transition-colors;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}

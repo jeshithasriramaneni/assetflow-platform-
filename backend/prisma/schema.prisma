@@ -1,0 +1,189 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum AssetStatus {
+  AVAILABLE
+  PARTIALLY_AVAILABLE
+  UNAVAILABLE
+  MAINTENANCE
+}
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ISSUED
+  RETURNED
+  OVERDUE
+  CANCELLED
+}
+
+enum AssetCondition {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+  DAMAGED
+}
+
+enum NotificationType {
+  BOOKING_APPROVED
+  BOOKING_REJECTED
+  BOOKING_DUE_SOON
+  ASSET_OVERDUE
+  BOOKING_SUBMITTED
+  ASSET_RETURNED
+}
+
+enum AuditAction {
+  USER_REGISTERED
+  USER_LOGIN
+  ASSET_CREATED
+  ASSET_UPDATED
+  ASSET_DELETED
+  BOOKING_CREATED
+  BOOKING_APPROVED
+  BOOKING_REJECTED
+  BOOKING_CANCELLED
+  ASSET_ISSUED
+  ASSET_RETURNED
+  CONDITION_UPDATED
+}
+
+model User {
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  password     String
+  role         Role      @default(USER)
+  department   String?
+  phone        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  bookings      Booking[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  color       String?  // hex color for UI
+  icon        String?  // icon name
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assets Asset[]
+
+  @@map("categories")
+}
+
+model Asset {
+  id               String         @id @default(uuid())
+  name             String
+  description      String?
+  categoryId       String
+  totalQuantity    Int
+  availableQuantity Int
+  status           AssetStatus    @default(AVAILABLE)
+  condition        AssetCondition @default(GOOD)
+  qrCode           String?        @unique
+  imageUrl         String?
+  location         String?
+  serialNumber     String?
+  purchaseDate     DateTime?
+  warrantyExpiry   DateTime?
+  notes            String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  category          Category             @relation(fields: [categoryId], references: [id])
+  bookings          Booking[]
+  maintenanceLogs   MaintenanceLog[]
+
+  @@map("assets")
+}
+
+model Booking {
+  id           String        @id @default(uuid())
+  userId       String
+  assetId      String
+  quantity     Int           @default(1)
+  status       BookingStatus @default(PENDING)
+  purpose      String
+  startDate    DateTime
+  endDate      DateTime
+  issuedAt     DateTime?
+  returnedAt   DateTime?
+  adminNote    String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id])
+  asset Asset @relation(fields: [assetId], references: [id])
+
+  @@map("bookings")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  metadata  Json?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+model AuditLog {
+  id         String      @id @default(uuid())
+  userId     String?
+  action     AuditAction
+  entityType String
+  entityId   String?
+  details    Json?
+  ipAddress  String?
+  createdAt  DateTime    @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+model MaintenanceLog {
+  id          String         @id @default(uuid())
+  assetId     String
+  reportedBy  String?
+  description String
+  condition   AssetCondition
+  resolvedAt  DateTime?
+  cost        Float?
+  createdAt   DateTime       @default(now())
+
+  asset Asset @relation(fields: [assetId], references: [id])
+
+  @@map("maintenance_logs")
+}
