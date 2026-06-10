@@ -102,7 +102,7 @@ export function BrowseAssetsPage() {
                       <div className="text-xs mt-0.5" style={{ color: asset.category?.color }}>{asset.category?.name}</div>
                     </div>
                   </div>
-                  <span className={clsx('badge border text-xs flex-shrink-0', sc.bg, sc.color)}>
+                  <span className={clsx('badge border text-xs flex-shrink-0', sc.bg)}>
                     <span className={clsx('inline-block w-1.5 h-1.5 rounded-full mr-1', sc.dot)} />{sc.label}
                   </span>
                 </div>

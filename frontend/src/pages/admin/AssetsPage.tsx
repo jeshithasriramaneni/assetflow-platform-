@@ -106,7 +106,7 @@ export function AssetsPage() {
                       <span className="text-[#555577] text-xs"> / {asset.totalQuantity}</span>
                     </td>
                     <td className="table-cell">
-                      <span className={clsx('badge border', sc.bg, sc.color)}>
+                      <span className={clsx('badge border', sc.bg)}>
                         <span className={clsx('inline-block w-1.5 h-1.5 rounded-full mr-1.5', sc.dot)} />
                         {sc.label}
                       </span>

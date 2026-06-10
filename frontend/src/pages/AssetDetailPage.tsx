@@ -52,7 +52,7 @@ export function AssetDetailPage() {
               <h1 className="font-display text-xl font-bold text-[#e0e0ff]">{asset.name}</h1>
               <div className="text-sm mt-0.5" style={{ color: asset.category?.color }}>{asset.category?.name}</div>
               <div className="flex gap-2 mt-2">
-                <span className={clsx('badge border text-xs', sc.bg, sc.color)}>
+                <span className={clsx('badge border text-xs', sc.bg)}>
                   <span className={clsx('inline-block w-1.5 h-1.5 rounded-full mr-1', sc.dot)} />{sc.label}
                 </span>
                 <span className={clsx('badge border text-xs border-transparent bg-[#1a1a30]', cc.color)}>{cc.label}</span>
