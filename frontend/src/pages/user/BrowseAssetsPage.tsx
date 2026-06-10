@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { assetsApi, categoriesApi } from '../../services/api';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { assetsApi, categoriesApi, bookingsApi } from '../../services/api';
 import { Asset } from '../../types';
 import { assetStatusConfig } from '../../utils';
-import { Search, Package, Filter } from 'lucide-react';
+import { Search, Package, Bell } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { BookingModal } from '../../components/modals/BookingModal';
+import toast from 'react-hot-toast';
 import clsx from 'clsx';
 
 export function BrowseAssetsPage() {
@@ -14,6 +15,12 @@ export function BrowseAssetsPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
   const [bookingAsset, setBookingAsset] = useState<Asset | null>(null);
+
+  const notifyMutation = useMutation({
+    mutationFn: (assetId: string) => bookingsApi.notifyMe(assetId),
+    onSuccess: () => toast.success('You will be notified when this asset is available!'),
+    onError: () => toast.error('Failed to set notification'),
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ['assets', search, categoryFilter, statusFilter, page],
@@ -102,7 +109,7 @@ export function BrowseAssetsPage() {
                       <div className="text-xs mt-0.5" style={{ color: asset.category?.color }}>{asset.category?.name}</div>
                     </div>
                   </div>
-                  <span className={clsx('badge border text-xs flex-shrink-0', sc.bg)}>
+                  <span className={clsx('badge border text-xs flex-shrink-0', sc.bg, sc.color)}>
                     <span className={clsx('inline-block w-1.5 h-1.5 rounded-full mr-1', sc.dot)} />{sc.label}
                   </span>
                 </div>
@@ -118,9 +125,17 @@ export function BrowseAssetsPage() {
                   </div>
                   <div className="flex gap-2">
                     <Link to={`/assets/${asset.id}`} className="text-xs text-indigo-400 hover:text-indigo-300">Details</Link>
-                    {canBook && (
+                    {canBook ? (
                       <button onClick={() => setBookingAsset(asset)} className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-2.5 py-1 rounded-md transition-colors">
                         Book
+                      </button>
+                    ) : (asset.status === 'UNAVAILABLE' || asset.status === 'PARTIALLY_AVAILABLE') && (
+                      <button
+                        onClick={() => notifyMutation.mutate(asset.id)}
+                        className="text-xs bg-amber-600/20 hover:bg-amber-600/30 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-md transition-colors flex items-center gap-1"
+                        title="Notify me when available"
+                      >
+                        <Bell className="w-3 h-3" /> Notify Me
                       </button>
                     )}
                   </div>

@@ -94,6 +94,10 @@ bookingsRouter.post('/', authenticate, async (req: AuthRequest, res: Response) =
       return res.status(400).json({ error: 'Start date cannot be in the past' });
     }
 
+    // Reduce available quantity immediately when booking is created
+    const newAvailable = asset.availableQuantity - data.quantity;
+    const newStatus = newAvailable <= 0 ? 'UNAVAILABLE' : newAvailable < asset.totalQuantity ? 'PARTIALLY_AVAILABLE' : 'AVAILABLE';
+
     const booking = await prisma.booking.create({
       data: {
         userId: req.user!.id,
@@ -110,6 +114,12 @@ bookingsRouter.post('/', authenticate, async (req: AuthRequest, res: Response) =
       },
     });
 
+    // Update asset availability immediately
+    await prisma.asset.update({
+      where: { id: data.assetId },
+      data: { availableQuantity: newAvailable, status: newStatus as any },
+    });
+
     await createAuditLog({
       userId: req.user!.id,
       action: AuditAction.BOOKING_CREATED,
@@ -118,7 +128,6 @@ bookingsRouter.post('/', authenticate, async (req: AuthRequest, res: Response) =
       details: { assetName: asset.name, quantity: data.quantity },
     });
 
-    // Notify admins (in a real system, fetch all admins)
     await createNotification({
       userId: req.user!.id,
       type: NotificationType.BOOKING_SUBMITTED,
@@ -279,6 +288,21 @@ bookingsRouter.patch('/:id/return', authenticate, requireAdmin, async (req: Auth
       metadata: { bookingId: booking.id },
     });
 
+    // Notify watchers that asset is back
+    const watchers = await prisma.notification.findMany({
+      where: { metadata: { path: ['watchAssetId'], equals: booking.assetId }, type: 'BOOKING_DUE_SOON', isRead: false },
+    });
+    for (const watcher of watchers) {
+      await prisma.notification.update({ where: { id: watcher.id }, data: { isRead: true } });
+      await createNotification({
+        userId: watcher.userId,
+        type: NotificationType.ASSET_RETURNED,
+        title: 'Asset Now Available!',
+        message: `${booking.asset.name} is now available for booking!`,
+        metadata: { assetId: booking.assetId },
+      });
+    }
+
     return res.json(updated);
   } catch (error) {
     return res.status(500).json({ error: 'Failed to return asset' });
@@ -300,11 +324,36 @@ bookingsRouter.patch('/:id/cancel', authenticate, async (req: AuthRequest, res: 
       return res.status(400).json({ error: 'Cannot cancel this booking' });
     }
 
-    const updated = await prisma.booking.update({
-      where: { id: req.params.id },
-      data: { status: BookingStatus.CANCELLED },
-      include: { user: { select: { id: true, name: true, email: true } }, asset: { include: { category: true } } },
+    // Restore availability when cancelled
+    const restoredAvailable = booking.asset.availableQuantity + booking.quantity;
+    const restoredStatus = restoredAvailable >= booking.asset.totalQuantity ? 'AVAILABLE' : 'PARTIALLY_AVAILABLE';
+
+    const [updated] = await prisma.$transaction([
+      prisma.booking.update({
+        where: { id: req.params.id },
+        data: { status: BookingStatus.CANCELLED },
+        include: { user: { select: { id: true, name: true, email: true } }, asset: { include: { category: true } } },
+      }),
+      prisma.asset.update({
+        where: { id: booking.assetId },
+        data: { availableQuantity: restoredAvailable, status: restoredStatus as any },
+      }),
+    ]);
+
+    // Notify users who requested "notify me" for this asset
+    const notifyWatchers = await prisma.notification.findMany({
+      where: { metadata: { path: ['watchAssetId'], equals: booking.assetId }, type: 'BOOKING_DUE_SOON', isRead: false },
     });
+    for (const watcher of notifyWatchers) {
+      await prisma.notification.update({ where: { id: watcher.id }, data: { isRead: true } });
+      await createNotification({
+        userId: watcher.userId,
+        type: NotificationType.ASSET_RETURNED,
+        title: 'Asset Now Available!',
+        message: `${booking.asset.name} is now available for booking!`,
+        metadata: { assetId: booking.assetId },
+      });
+    }
 
     await createAuditLog({
       userId: req.user!.id,
@@ -317,5 +366,26 @@ bookingsRouter.patch('/:id/cancel', authenticate, async (req: AuthRequest, res: 
     return res.json(updated);
   } catch (error) {
     return res.status(500).json({ error: 'Failed to cancel booking' });
+  }
+});
+
+// POST notify me when asset is available
+bookingsRouter.post('/:assetId/notify-me', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const asset = await prisma.asset.findUnique({ where: { id: req.params.assetId } });
+    if (!asset) return res.status(404).json({ error: 'Asset not found' });
+
+    // Store as a special notification placeholder
+    await createNotification({
+      userId: req.user!.id,
+      type: NotificationType.BOOKING_DUE_SOON,
+      title: 'Watching Asset',
+      message: `You will be notified when ${asset.name} becomes available.`,
+      metadata: { watchAssetId: req.params.assetId, assetName: asset.name },
+    });
+
+    return res.json({ message: 'You will be notified when this asset is available!' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to set notification' });
   }
 });

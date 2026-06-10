@@ -29,7 +29,7 @@ export default api;
 
 // Auth
 export const authApi = {
-  register: (data: { name: string; email: string; password: string; department?: string; phone?: string }) =>
+  register: (data: { name: string; email: string; password: string; department?: string; phone?: string; adminCode?: string }) =>
     api.post('/auth/register', data),
   login: (data: { email: string; password: string }) => api.post('/auth/login', data),
   me: () => api.get('/auth/me'),
@@ -70,6 +70,7 @@ export const bookingsApi = {
   issue: (id: string) => api.patch(`/bookings/${id}/issue`),
   return: (id: string) => api.patch(`/bookings/${id}/return`),
   cancel: (id: string) => api.patch(`/bookings/${id}/cancel`),
+  notifyMe: (assetId: string) => api.post(`/bookings/${assetId}/notify-me`),
 };
 
 // Analytics
