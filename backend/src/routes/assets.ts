@@ -101,20 +101,32 @@ assetsRouter.post('/', authenticate, requireAdmin, async (req: AuthRequest, res:
     const qrCode = `ASSET-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
     const qrCodeDataUrl = await QRCode.toDataURL(qrCode);
 
-    const asset = await prisma.asset.create({
-      data: {
-        ...data,
-        availableQuantity: data.availableQuantity ?? data.totalQuantity,
-        status: data.status ?? AssetStatus.AVAILABLE,
-        condition: data.condition ?? AssetCondition.GOOD,
-        purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : undefined,
-        warrantyExpiry: data.warrantyExpiry ? new Date(data.warrantyExpiry) : undefined,
-        qrCode,
-        imageUrl: qrCodeDataUrl,
-      },
-      include: { category: true },
-    });
+   const asset = await prisma.asset.create({
+  data: {
+    name: data.name,
+    description: data.description,
+    totalQuantity: data.totalQuantity,
+    availableQuantity: data.availableQuantity ?? data.totalQuantity,
+    status: data.status ?? AssetStatus.AVAILABLE,
+    condition: data.condition ?? AssetCondition.GOOD,
+    location: data.location,
+    serialNumber: data.serialNumber,
+    purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : undefined,
+    warrantyExpiry: data.warrantyExpiry ? new Date(data.warrantyExpiry) : undefined,
+    notes: data.notes,
+    qrCode,
+    imageUrl: qrCodeDataUrl,
 
+    category: {
+      connect: {
+        id: data.categoryId,
+      },
+    },
+  },
+  include: {
+    category: true,
+  },
+});
     await createAuditLog({
       userId: req.user!.id,
       action: AuditAction.ASSET_CREATED,
