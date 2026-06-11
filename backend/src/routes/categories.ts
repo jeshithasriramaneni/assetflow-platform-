@@ -1,5 +1,7 @@
+
 import { Router, Response } from 'express';
 import { z } from 'zod';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../utils/prisma';
 import { authenticate, requireAdmin, AuthRequest } from '../middleware/auth';
 
@@ -25,7 +27,7 @@ categoriesRouter.post('/', authenticate, requireAdmin, async (req: AuthRequest, 
       color: z.string().optional(),
       icon: z.string().optional(),
     });
-    const data = schema.parse(req.body);
+    const data = schema.parse(req.body) as Prisma.CategoryCreateInput;
     const category = await prisma.category.create({ data });
     return res.status(201).json(category);
   } catch (error) {

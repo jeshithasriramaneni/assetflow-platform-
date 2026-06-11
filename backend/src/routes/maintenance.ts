@@ -34,9 +34,12 @@ maintenanceRouter.post('/', authenticate, requireAdmin, async (req: AuthRequest,
 
     const log = await prisma.maintenanceLog.create({
       data: {
-        ...data,
+        description: data.description,
+        condition: data.condition,
+        cost: data.cost ?? null,
+        resolvedAt: data.resolvedAt ? new Date(data.resolvedAt) : null,
         reportedBy: req.user!.id,
-        resolvedAt: data.resolvedAt ? new Date(data.resolvedAt) : undefined,
+        asset: { connect: { id: data.assetId } },
       },
     });
 
@@ -63,3 +66,4 @@ maintenanceRouter.post('/', authenticate, requireAdmin, async (req: AuthRequest,
     return res.status(500).json({ error: 'Failed to create maintenance log' });
   }
 });
+
