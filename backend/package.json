@@ -1,9 +1,9 @@
 {
   "name": "asset-platform-backend",
   "version": "1.0.0",
-  "scripts": {
+ "scripts": {
     "dev": "ts-node-dev --respawn src/index.ts",
-    "build": "tsc",
+    "build": "tsc --skipLibCheck",
     "start": "node dist/index.js",
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev",
