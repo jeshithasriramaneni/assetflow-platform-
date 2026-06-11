@@ -1,0 +1,1 @@
+const {PrismaClient}=require('@prisma/client');const prisma=new PrismaClient();async function check(){const a=await prisma.asset.findFirst({where:{name:{contains:'nets'}}});console.log('QR Code:',a?.qrCode);console.log('ImageUrl:',a?.imageUrl?.substring(0,50));await prisma.$disconnect();}check(); 

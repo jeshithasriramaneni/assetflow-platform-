@@ -1,0 +1,1 @@
+f=open('frontend/src/pages/user/BrowseAssetsPage.tsx',encoding='utf-8').read();f=f.replace('sc.bg, sc.color','sc.bg');open('frontend/src/pages/user/BrowseAssetsPage.tsx','w',encoding='utf-8').write(f)  

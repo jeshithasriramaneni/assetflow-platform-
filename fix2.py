@@ -1,6 +1,1 @@
-import re 
-f = 'frontend/src/pages/user/BrowseAssetsPage.tsx' 
-c = open(f, encoding='utf-8').read() 
-c = c.replace('sc.bg, sc.color', 'sc.bg') 
-open(f, 'w', encoding='utf-8').write(c) 
-print('Done!') 
+f=open('frontend/src/pages/admin/AssetsPage.tsx',encoding='utf-8').read();f=f.replace('sc.bg, sc.color','sc.bg');open('frontend/src/pages/admin/AssetsPage.tsx','w',encoding='utf-8').write(f)  
