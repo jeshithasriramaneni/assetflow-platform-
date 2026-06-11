@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { notificationsApi } from '../../services/api';
 import {
   LayoutDashboard, Package, Calendar, Users, BarChart3, ClipboardList,
-  Settings, Bell, LogOut, Tag, ChevronRight, Boxes, Shield, FileText
+  Settings, Bell, LogOut, Tag, ChevronRight, Boxes, Shield, FileText,Lightbulb,QrCode
 } from 'lucide-react';
 import { getInitials } from '../../utils';
 import clsx from 'clsx';
@@ -37,11 +37,14 @@ export function Layout() {
         { to: '/admin/users', icon: Users, label: 'Users' },
         { to: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
         { to: '/admin/audit', icon: FileText, label: 'Audit Log' },
+        { to: '/admin/qr-scanner', icon: QrCode, label: 'QR Scanner' },
+        { to: '/admin/suggestions', icon: Lightbulb, label: 'Suggestions' },
       ]
     : [
         { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { to: '/browse', icon: Boxes, label: 'Browse Assets' },
         { to: '/my-bookings', icon: ClipboardList, label: 'My Bookings' },
+        { to: '/suggestions', icon: Lightbulb, label: 'Suggest Asset' },
       ];
 
   return (

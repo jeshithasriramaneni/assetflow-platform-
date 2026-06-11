@@ -10,6 +10,7 @@ import { notificationsRouter } from './routes/notifications';
 import { auditRouter } from './routes/audit';
 import { categoriesRouter } from './routes/categories';
 import { maintenanceRouter } from './routes/maintenance';
+import { suggestionsRouter } from './routes/suggestions';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -40,6 +41,7 @@ app.use('/api/notifications', notificationsRouter);
 app.use('/api/audit', auditRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/maintenance', maintenanceRouter);
+app.use('/api/suggestions', suggestionsRouter);
 
 // Error handling
 app.use(errorHandler);

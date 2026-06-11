@@ -178,7 +178,7 @@ export function BookingsAdminPage() {
                           </button>
                         )}
                         {(b.status === 'ISSUED' || overdue) && (
-                          <button onClick={() => returnMutation.mutate(b.id)} className="p-1.5 rounded hover:bg-emerald-600/15 text-[#555577] hover:text-emerald-400 transition-colors" title="Mark Returned">
+                          <button onClick={() => { if (confirm(`Confirm return of ${b.asset.name} from ${b.user.name}? Make sure the asset has been physically received.`)) returnMutation.mutate(b.id); }} className="p-1.5 rounded hover:bg-emerald-600/15 text-[#555577] hover:text-emerald-400 transition-colors" title="Mark Returned">
                             <RotateCcw className="w-4 h-4" />
                           </button>
                         )}

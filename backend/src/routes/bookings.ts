@@ -369,6 +369,50 @@ bookingsRouter.patch('/:id/cancel', authenticate, async (req: AuthRequest, res: 
   }
 });
 
+// PATCH user requests return
+bookingsRouter.patch('/:id/request-return', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const booking = await prisma.booking.findUnique({
+      where: { id: req.params.id },
+      include: { asset: true, user: true },
+    });
+    if (!booking) return res.status(404).json({ error: 'Booking not found' });
+    if (booking.userId !== req.user!.id) return res.status(403).json({ error: 'Access denied' });
+    if (booking.status !== 'ISSUED') return res.status(400).json({ error: 'Asset is not currently issued' });
+
+    // Update booking note to indicate return requested
+    const updated = await prisma.booking.update({
+      where: { id: req.params.id },
+      data: { adminNote: 'RETURN_REQUESTED: User has requested to return this asset.' },
+      include: { user: { select: { id: true, name: true, email: true } }, asset: { include: { category: true } } },
+    });
+
+    // Notify all admins
+    const admins = await prisma.user.findMany({ where: { role: 'ADMIN' } });
+    for (const admin of admins) {
+      await createNotification({
+        userId: admin.id,
+        type: NotificationType.ASSET_RETURNED,
+        title: 'Return Requested',
+        message: `${booking.user.name} has requested to return ${booking.asset.name}. Please verify and mark as returned.`,
+        metadata: { bookingId: booking.id, assetId: booking.assetId },
+      });
+    }
+
+    await createAuditLog({
+      userId: req.user!.id,
+      action: AuditAction.ASSET_RETURNED,
+      entityType: 'Booking',
+      entityId: booking.id,
+      details: { note: 'User requested return', assetName: booking.asset.name },
+    });
+
+    return res.json(updated);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to request return' });
+  }
+});
+
 // POST notify me when asset is available
 bookingsRouter.post('/:assetId/notify-me', authenticate, async (req: AuthRequest, res: Response) => {
   try {

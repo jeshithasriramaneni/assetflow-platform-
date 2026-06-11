@@ -4,6 +4,10 @@ import { Layout } from './components/layout/Layout';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 
+import { QRScannerPage } from './pages/QRScannerPage';
+import { SuggestionsPage } from './pages/user/SuggestionsPage';
+import { AdminSuggestionsPage } from './pages/admin/AdminSuggestionsPage';
+
 // Admin pages
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AssetsPage } from './pages/admin/AssetsPage';
@@ -60,6 +64,7 @@ export default function App() {
         {/* User routes */}
         <Route path="browse" element={<BrowseAssetsPage />} />
         <Route path="my-bookings" element={<MyBookingsPage />} />
+        <Route path="suggestions" element={<SuggestionsPage />} />
 
         {/* Admin routes */}
         <Route path="admin">
@@ -69,6 +74,8 @@ export default function App() {
           <Route path="categories" element={<AdminRoute><CategoriesPage /></AdminRoute>} />
           <Route path="analytics" element={<AdminRoute><AnalyticsPage /></AdminRoute>} />
           <Route path="audit" element={<AdminRoute><AuditPage /></AdminRoute>} />
+          <Route path="qr-scanner" element={<AdminRoute><QRScannerPage /></AdminRoute>} />
+          <Route path="suggestions" element={<AdminRoute><AdminSuggestionsPage /></AdminRoute>} />
         </Route>
       </Route>
 

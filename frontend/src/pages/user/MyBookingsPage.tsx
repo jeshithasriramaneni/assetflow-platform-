@@ -4,7 +4,7 @@ import { bookingsApi } from '../../services/api';
 import { Booking } from '../../types';
 import { bookingStatusConfig, formatDate, isOverdue } from '../../utils';
 import toast from 'react-hot-toast';
-import { ClipboardList, XCircle, Loader2, Calendar, Package } from 'lucide-react';
+import { ClipboardList, XCircle, Loader2, Calendar, Package, RotateCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 
@@ -22,6 +22,12 @@ export function MyBookingsPage() {
     mutationFn: (id: string) => bookingsApi.cancel(id),
     onSuccess: () => { toast.success('Booking cancelled'); qc.invalidateQueries({ queryKey: ['my-bookings'] }); },
     onError: (e: any) => toast.error(e.response?.data?.error || 'Cancel failed'),
+  });
+
+  const returnRequestMutation = useMutation({
+    mutationFn: (id: string) => bookingsApi.requestReturn(id),
+    onSuccess: () => { toast.success('Return request sent! Admin will verify and confirm.'); qc.invalidateQueries({ queryKey: ['my-bookings'] }); },
+    onError: (e: any) => toast.error(e.response?.data?.error || 'Request failed'),
   });
 
   const bookings: Booking[] = data?.data?.bookings || [];
@@ -102,7 +108,7 @@ export function MyBookingsPage() {
                       <span style={{ color: b.asset.category?.color }}>{b.asset.category?.name}</span>
                     </div>
 
-                    {b.adminNote && (
+                    {b.adminNote && !b.adminNote.startsWith('RETURN_REQUESTED') && (
                       <div className={clsx('mt-2 text-xs px-3 py-2 rounded-md',
                         b.status === 'REJECTED' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
                       )}>
@@ -111,15 +117,31 @@ export function MyBookingsPage() {
                     )}
                   </div>
 
-                  {canCancel && (
-                    <button
-                      onClick={() => { if (confirm('Cancel this booking?')) cancelMutation.mutate(b.id); }}
-                      className="p-1.5 rounded hover:bg-red-600/15 text-[#555577] hover:text-red-400 transition-colors flex-shrink-0"
-                      title="Cancel booking"
-                    >
-                      <XCircle className="w-4 h-4" />
-                    </button>
-                  )}
+                  <div className="flex gap-1 flex-shrink-0">
+                    {b.status === 'ISSUED' && !b.adminNote?.startsWith('RETURN_REQUESTED') && (
+                      <button
+                        onClick={() => { if (confirm('Request to return this asset?')) returnRequestMutation.mutate(b.id); }}
+                        className="p-1.5 rounded hover:bg-emerald-600/15 text-[#555577] hover:text-emerald-400 transition-colors"
+                        title="Request Return"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                      </button>
+                    )}
+                    {b.status === 'ISSUED' && b.adminNote?.startsWith('RETURN_REQUESTED') && (
+                      <span className="text-xs text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-2 py-1 rounded-md">
+                        Return Requested
+                      </span>
+                    )}
+                    {canCancel && (
+                      <button
+                        onClick={() => { if (confirm('Cancel this booking?')) cancelMutation.mutate(b.id); }}
+                        className="p-1.5 rounded hover:bg-red-600/15 text-[#555577] hover:text-red-400 transition-colors"
+                        title="Cancel booking"
+                      >
+                        <XCircle className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             );

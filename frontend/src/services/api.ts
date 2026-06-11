@@ -71,6 +71,7 @@ export const bookingsApi = {
   return: (id: string) => api.patch(`/bookings/${id}/return`),
   cancel: (id: string) => api.patch(`/bookings/${id}/cancel`),
   notifyMe: (assetId: string) => api.post(`/bookings/${assetId}/notify-me`),
+  requestReturn: (id: string) => api.patch(`/bookings/${id}/request-return`),
 };
 
 // Analytics
@@ -110,4 +111,15 @@ export const maintenanceApi = {
   listForAsset: (assetId: string) => api.get(`/maintenance/asset/${assetId}`),
   create: (data: { assetId: string; description: string; condition: string; cost?: number; resolvedAt?: string }) =>
     api.post('/maintenance', data),
+};
+
+// Suggestions
+export const suggestionsApi = {
+  list: (params?: { status?: string; page?: number; limit?: number }) =>
+    api.get('/suggestions', { params }),
+  create: (data: { assetName: string; category: string; reason: string; quantity?: number; urgency?: string }) =>
+    api.post('/suggestions', data),
+  review: (id: string, data: { status: string; adminNote?: string }) =>
+    api.patch(`/suggestions/${id}/review`, data),
+  delete: (id: string) => api.delete(`/suggestions/${id}`),
 };
