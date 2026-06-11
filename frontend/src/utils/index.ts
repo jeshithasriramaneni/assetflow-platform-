@@ -23,11 +23,34 @@ export const bookingStatusConfig: Record<BookingStatus, { label: string; color: 
   CANCELLED: { label: 'Cancelled', color: 'text-slate-500', bg: 'bg-slate-500/10 border-slate-500/30' },
 };
 
-export const assetStatusConfig: Record<AssetStatus, { label: string; color: string; dot: string }> = {
-  AVAILABLE: { label: 'Available', color: 'text-emerald-400', dot: 'bg-emerald-400' },
-  PARTIALLY_AVAILABLE: { label: 'Partial', color: 'text-amber-400', dot: 'bg-amber-400' },
-  UNAVAILABLE: { label: 'Unavailable', color: 'text-red-400', dot: 'bg-red-400' },
-  MAINTENANCE: { label: 'Maintenance', color: 'text-orange-400', dot: 'bg-orange-400' },
+export const assetStatusConfig: Record<
+  AssetStatus,
+  { label: string; color: string; dot: string; bg: string }
+> = {
+  AVAILABLE: {
+    label: 'Available',
+    color: 'text-emerald-400',
+    dot: 'bg-emerald-400',
+    bg: 'bg-emerald-500/10'
+  },
+  PARTIALLY_AVAILABLE: {
+    label: 'Partial',
+    color: 'text-amber-400',
+    dot: 'bg-amber-400',
+    bg: 'bg-amber-500/10'
+  },
+  UNAVAILABLE: {
+    label: 'Unavailable',
+    color: 'text-red-400',
+    dot: 'bg-red-400',
+    bg: 'bg-red-500/10'
+  },
+  MAINTENANCE: {
+    label: 'Maintenance',
+    color: 'text-orange-400',
+    dot: 'bg-orange-400',
+    bg: 'bg-orange-500/10'
+  },
 };
 
 export const conditionConfig: Record<AssetCondition, { label: string; color: string }> = {
