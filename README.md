@@ -1,19 +1,10 @@
-# 🎯 AssetFlow — Smart Asset Management Platform
+#  AssetFlow — Smart Asset Management Platform
 
 > Built for the **IIT Roorkee Cultural Council** hackathon challenge. A production-grade, full-stack asset management and resource allocation platform.
 
----
 
-## 📸 Demo Credentials
 
-| Role  | Email                        | Password   |
-|-------|------------------------------|------------|
-| Admin | admin@iitroorkee.ac.in      | admin123   |
-| User  | rahul.sharma@iitr.ac.in     | user123    |
-
----
-
-## 🏗️ Technology Stack
+##  Technology Stack
 
 ### Backend
 - **Runtime**: Node.js 20 + TypeScript
@@ -38,7 +29,7 @@
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Option 1: Docker (Recommended)
 
@@ -95,7 +86,7 @@ npm run dev
 
 ---
 
-## ✅ Feature Checklist
+##  Feature Checklist
 
 ### Mandatory Features
 
@@ -135,7 +126,7 @@ npm run dev
 
 ---
 
-## 🗂️ Project Structure
+##  Project Structure
 
 ```
 asset-platform/
@@ -179,7 +170,7 @@ asset-platform/
 
 ---
 
-## 🔑 API Overview
+##  API Overview
 
 | Method | Endpoint                     | Role  | Description               |
 |--------|------------------------------|-------|---------------------------|
@@ -198,7 +189,7 @@ asset-platform/
 
 ---
 
-## 🎨 Design Decisions
+##  Design Decisions
 
 - **Dark theme** — Reduced eye strain for operations staff using the platform continuously
 - **Role-based sidebar** — Admins and users see contextually relevant navigation only
@@ -209,7 +200,7 @@ asset-platform/
 
 ---
 
-## 📊 Database Schema
+##  Database Schema
 
 Core models: `User`, `Category`, `Asset`, `Booking`, `Notification`, `AuditLog`, `MaintenanceLog`
 
