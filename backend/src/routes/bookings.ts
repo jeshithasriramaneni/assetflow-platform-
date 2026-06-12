@@ -165,14 +165,51 @@ bookingsRouter.patch('/:id/review', authenticate, requireAdmin, async (req: Auth
 
     const newStatus = action === 'approve' ? BookingStatus.APPROVED : BookingStatus.REJECTED;
 
-    const updated = await prisma.booking.update({
-      where: { id: req.params.id },
-      data: { status: newStatus, adminNote },
-      include: {
-        user: { select: { id: true, name: true, email: true } },
-        asset: { include: { category: true } },
-      },
-    });
+    let updated;
+    if (action === 'reject') {
+      // Restore availability since it was reserved at creation time
+      const restoredAvailable = booking.asset.availableQuantity + booking.quantity;
+      const restoredStatus = restoredAvailable >= booking.asset.totalQuantity ? 'AVAILABLE' : 'PARTIALLY_AVAILABLE';
+
+      [updated] = await prisma.$transaction([
+        prisma.booking.update({
+          where: { id: req.params.id },
+          data: { status: newStatus, adminNote },
+          include: {
+            user: { select: { id: true, name: true, email: true } },
+            asset: { include: { category: true } },
+          },
+        }),
+        prisma.asset.update({
+          where: { id: booking.assetId },
+          data: { availableQuantity: restoredAvailable, status: restoredStatus as any },
+        }),
+      ]);
+
+      // Notify watchers that asset is back in stock
+      const watchers = await prisma.notification.findMany({
+        where: { metadata: { path: ['watchAssetId'], equals: booking.assetId }, type: 'BOOKING_DUE_SOON', isRead: false },
+      });
+      for (const watcher of watchers) {
+        await prisma.notification.update({ where: { id: watcher.id }, data: { isRead: true } });
+        await createNotification({
+          userId: watcher.userId,
+          type: NotificationType.ASSET_RETURNED,
+          title: 'Asset Now Available!',
+          message: `${booking.asset.name} is now available for booking!`,
+          metadata: { assetId: booking.assetId },
+        });
+      }
+    } else {
+      updated = await prisma.booking.update({
+        where: { id: req.params.id },
+        data: { status: newStatus, adminNote },
+        include: {
+          user: { select: { id: true, name: true, email: true } },
+          asset: { include: { category: true } },
+        },
+      });
+    }
 
     await createAuditLog({
       userId: req.user!.id,
