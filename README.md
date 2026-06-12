@@ -90,39 +90,39 @@ npm run dev
 
 ### Mandatory Features
 
-| Feature                        | Status |
-|-------------------------------|--------|
-| JWT Authentication (login/register) | ✅ |
-| Role-based access (ADMIN / USER) | ✅ |
-| Asset CRUD (admin)            | ✅ |
-| Asset categorization          | ✅ |
-| Asset quantity management     | ✅ |
-| Browse & search assets (user) | ✅ |
-| Asset booking requests        | ✅ |
-| Booking prevents over-allocation | ✅ |
-| Admin approval workflow       | ✅ |
-| Asset issue & return tracking | ✅ |
-| Due date management           | ✅ |
-| Analytics dashboard           | ✅ |
-| Utilization charts (bar, pie, line) | ✅ |
-| Summary stat cards            | ✅ |
-| User borrowing history        | ✅ |
-| Admin system-wide activity    | ✅ |
+| Feature                        
+|-------------------------------
+| JWT Authentication (login/register) 
+| Role-based access (ADMIN / USER) 
+| Asset CRUD (admin)            
+| Asset categorization          
+| Asset quantity management    
+| Browse & search assets (user) 
+| Asset booking requests        
+| Booking prevents over-allocation 
+| Admin approval workflow       
+| Asset issue & return tracking 
+| Due date management           
+| Analytics dashboard          
+| Utilization charts (bar, pie, line) 
+| Summary stat cards           
+| User borrowing history        
+| Admin system-wide activity    
 
 ### Optional/Bonus Features
 
-| Feature                        | Status |
-|-------------------------------|--------|
-| In-app notification system    | ✅ |
-| Audit logging (all actions)   | ✅ |
-| QR code generation per asset  | ✅ |
-| QR code download (PNG)        | ✅ |
-| Asset health/condition tracking | ✅ |
-| Maintenance log history       | ✅ |
-| Dockerized deployment         | ✅ |
-| Overdue booking detection     | ✅ |
-| Profile & password management | ✅ |
-| User role management (admin)  | ✅ |
+| Feature                        
+|-------------------------------
+| In-app notification system    
+| Audit logging (all actions)   
+| QR code generation per asset  
+| QR code download (PNG)        
+| Asset health/condition tracking 
+| Maintenance log history       
+| Dockerized deployment         
+| Overdue booking detection     
+| Profile & password management 
+| User role management (admin)  
 
 ---
 
