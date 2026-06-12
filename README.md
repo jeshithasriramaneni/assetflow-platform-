@@ -4,7 +4,7 @@
 
 ---
 
-## 📸 Demo Credentials
+##  Demo Credentials
 
 | Role  | Email                        | Password   |
 |-------|------------------------------|------------|
