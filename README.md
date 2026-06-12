@@ -2,16 +2,7 @@
 
 > Built for the **IIT Roorkee Cultural Council** hackathon challenge. A production-grade, full-stack asset management and resource allocation platform.
 
----
 
-##  Demo Credentials
-
-| Role  | Email                        | Password   |
-|-------|------------------------------|------------|
-| Admin | admin@iitroorkee.ac.in      | admin123   |
-| User  | rahul.sharma@iitr.ac.in     | user123    |
-
----
 
 ##  Technology Stack
 
